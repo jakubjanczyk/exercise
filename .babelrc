@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    "react-hot-loader/babel"
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        ["env", {
+          "targets": { "node": "current" }
+        }]
+      ],
+      "sourceMaps": true,
+      "retainLines": true
+    }
+  },
+  "presets": [
+    ["env", {
+      "targets": {
+        "browsers": [
+          "last 2 Chrome versions",
+          "last 2 Firefox versions",
+          "last 2 Edge versions",
+          "last 2 Safari versions",
+          "IE 11"]
+      },
+      "modules": false
+    }],
+    "react"
+  ]
+}
