@@ -1,11 +1,17 @@
 import React from 'react';
+import MockAdapter from 'axios-mock-adapter';
+import axios from 'axios';
 import { mountWithCustomWrappers } from '../test-utils/custom-wrappers';
 import { wrapperForCustomersList } from './customers-list-test-wrapper';
 import { CustomersListPage } from './CustomersListPage';
 import { wrapperForCustomersListPage } from './customers-list-page-test-wrapper';
 import { wrapperForCustomersDetails } from './customer-details-test-wrapper';
+import { flushPromises } from '../test-utils/async-utils';
+
+const mock = new MockAdapter(axios);
 
 describe('CustomersListPage', () => {
+  let server;
   const customers = [
     {
       id: '123',
@@ -39,8 +45,12 @@ describe('CustomersListPage', () => {
     }
   ];
 
-  it('should display list of customers', () => {
-    const component = mountPage();
+  beforeEach(() => {
+    mock.onGet(/\/customers/).reply(200, customers);
+  });
+
+  it('should display list of fetched customers', async () => {
+    const component = await mountPage();
 
     expect(component.customersRows()).toEqual([
       ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923'],
@@ -51,8 +61,8 @@ describe('CustomersListPage', () => {
   });
 
   describe('filtering', () => {
-    it('should allow to filter list of customers by ID', () => {
-      const component = mountPage();
+    it('should allow to filter list of customers by ID', async () => {
+      const component = await mountPage();
 
       component.typeFilterText('456');
 
@@ -61,8 +71,8 @@ describe('CustomersListPage', () => {
       ]);
     });
 
-    it('should allow to filter list of customers by status', () => {
-      const component = mountPage();
+    it('should allow to filter list of customers by status', async () => {
+      const component = await mountPage();
 
       component.typeFilterText('prospective');
 
@@ -72,8 +82,8 @@ describe('CustomersListPage', () => {
       ]);
     });
 
-    it('should allow to filter list of customers by date', () => {
-      const component = mountPage();
+    it('should allow to filter list of customers by date', async () => {
+      const component = await mountPage();
 
       component.typeFilterText('09-23');
 
@@ -82,8 +92,8 @@ describe('CustomersListPage', () => {
       ]);
     });
 
-    it('should allow to filter list of customers by name', () => {
-      const component = mountPage();
+    it('should allow to filter list of customers by name', async () => {
+      const component = await mountPage();
 
       component.typeFilterText('Doe');
 
@@ -93,8 +103,8 @@ describe('CustomersListPage', () => {
       ]);
     });
 
-    it('should allow to filter list of customers by phone number', () => {
-      const component = mountPage();
+    it('should allow to filter list of customers by phone number', async () => {
+      const component = await mountPage();
 
       component.typeFilterText('+48234872');
 
@@ -103,8 +113,8 @@ describe('CustomersListPage', () => {
       ]);
     });
 
-    it('should allow to filter list of customers by multiple fields', () => {
-      const component = mountPage();
+    it('should allow to filter list of customers by multiple fields', async () => {
+      const component = await mountPage();
 
       component.typeFilterText('234');
 
@@ -114,8 +124,8 @@ describe('CustomersListPage', () => {
       ]);
     });
 
-    it('should keep sorting when filtering', () => {
-      const component = mountPage();
+    it('should keep sorting when filtering', async () => {
+      const component = await mountPage();
 
       component.clickOnColumnHeader('Name');
       component.clickOnColumnHeader('Name');
@@ -128,22 +138,22 @@ describe('CustomersListPage', () => {
     });
 
     describe('customer details', () => {
-      it('should not open customer details by default', () => {
-        const component = mountPage();
+      it('should not open customer details by default', async () => {
+        const component = await mountPage();
 
         expect(component.customerDetailsComponent()).not.toExist();
       });
 
-      it('should open customer details when clicked on customer', () => {
-        const component = mountPage();
+      it('should open customer details when clicked on customer', async () => {
+        const component = await mountPage();
 
         component.clickOnCustomerAtRow(0);
 
         expect(component.customerDetailsComponent()).toExist();
       });
 
-      it('should close customer details when clicked on back button', () => {
-        const component = mountPage();
+      it('should close customer details when clicked on back button', async () => {
+        const component = await mountPage();
 
         component.clickOnCustomerAtRow(0);
         component.goBackToList();
@@ -151,8 +161,8 @@ describe('CustomersListPage', () => {
         expect(component.customerDetailsComponent()).not.toExist();
       });
 
-      it('should display all basic customer details', () => {
-        const component = mountPage();
+      it('should display all basic customer details', async () => {
+        const component = await mountPage();
 
         component.clickOnCustomerAtRow(0);
 
@@ -163,8 +173,8 @@ describe('CustomersListPage', () => {
         expect(component.customerDetailsStatus()).toEqual('prospective');
       });
 
-      it('should open one customer, close, open another one with new data', () => {
-        const component = mountPage();
+      it('should open one customer, close, open another one with new data', async () => {
+        const component = await mountPage();
 
         component.clickOnCustomerAtRow(0);
         component.goBackToList();
@@ -173,8 +183,8 @@ describe('CustomersListPage', () => {
         expect(component.customerDetailsId()).toEqual('234');
       });
 
-      it('should display all notes for a customer', () => {
-        const component = mountPage();
+      it('should display all notes for a customer', async () => {
+        const component = await mountPage();
 
         component.clickOnCustomerAtRow(0);
 
@@ -184,8 +194,8 @@ describe('CustomersListPage', () => {
         ]);
       });
 
-      it('should allow to change status of a customer', () => {
-        const component = mountPage();
+      it('should allow to change status of a customer', async () => {
+        const component = await mountPage();
         component.clickOnCustomerAtRow(0);
 
         component.changeCustomerStatus('current');
@@ -195,10 +205,16 @@ describe('CustomersListPage', () => {
     });
   });
 
-  const mountPage = () => mountWithCustomWrappers(
-    <CustomersListPage customers={customers} />,
-    wrapperForCustomersList,
-    wrapperForCustomersListPage,
-    wrapperForCustomersDetails
-  );
+  const mountPage = async () => {
+    const component = mountWithCustomWrappers(
+      <CustomersListPage />,
+      wrapperForCustomersList,
+      wrapperForCustomersListPage,
+      wrapperForCustomersDetails
+    );
+    await flushPromises();
+    component.update();
+
+    return component;
+  };
 });

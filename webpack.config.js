@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
@@ -20,7 +21,8 @@ module.exports = {
 
   devServer: {
     contentBase: './dist',
-    hot: true
+    hot: true,
+    port: 5000
   },
 
   plugins: [
@@ -29,6 +31,7 @@ module.exports = {
       inject: true,
       template: './src/index.html',
     }),
+    new webpack.DefinePlugin(getClientEnvironment()),
   ],
 
   module: {
@@ -84,3 +87,21 @@ module.exports = {
 
   performance: false,
 };
+
+function getClientEnvironment() {
+  const raw = Object.keys(process.env)
+    .filter(key => key === 'BASE_URL')
+    .reduce(
+      (env, key) => {
+        env[key] = process.env[key];
+        return env;
+      },
+      {}
+    );
+  return {
+    'process.env': Object.keys(raw).reduce((env, key) => {
+      env[key] = JSON.stringify(raw[key]);
+      return env;
+    }, {}),
+  };
+}

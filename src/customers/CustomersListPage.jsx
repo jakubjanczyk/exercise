@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { CustomersList } from './CustomersList';
 import { FilterBox } from './FilterBox';
 import { CustomerDetails } from './CustomerDetails';
+import { withCustomersFetch } from './withCustomersFetch';
 
-export class CustomersListPage extends Component {
+class CustomersListPageComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -45,7 +46,7 @@ export class CustomersListPage extends Component {
   }
 }
 
-CustomersListPage.propTypes = {
+CustomersListPageComponent.propTypes = {
   customers: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
@@ -62,3 +63,5 @@ CustomersListPage.propTypes = {
     })
   ).isRequired
 };
+
+export const CustomersListPage = withCustomersFetch(CustomersListPageComponent);
