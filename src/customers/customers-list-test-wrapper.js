@@ -10,10 +10,15 @@ export const wrapperForCustomersList = (component) => {
     .findWhere((el) => el.hasClass('rt-th') && el.text() === column)
     .click();
 
+  const customersRows = () => customersTable()
+    .find('.rt-tbody .rt-tr')
+    .map(row => row.find('.rt-td').map(el => el.text()));
+
   return {
     customersTableColumns,
     customersTableRowAt,
     numberOfCustomerRows,
     clickOnColumnHeader,
+    customersRows
   };
 };

@@ -1,10 +1,10 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
 import 'react-table/react-table.css';
-import { CustomersList } from './customers/CustomersList';
+import { CustomersListPage } from './customers/CustomersListPage';
 
 const App = () => (
-  <CustomersList customers={[
+  <CustomersListPage customers={[
     {
       id: '123', status: 'prospective', createdAt: '2018-09-23 16:11:30', name: 'Jane Doe', phone: '+48234872923'
     },
