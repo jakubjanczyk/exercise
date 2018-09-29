@@ -8,15 +8,19 @@ export const withCustomersFetch = (WrappedComponent) => {
     };
 
     componentDidMount() {
+      this.fetchCustomers();
+    }
+
+    fetchCustomers = () => {
       axios.get(`${process.env.BASE_URL}/customers`)
         .then(({ data }) => {
           this.setState(() => ({ customers: data }));
         });
-    }
+    };
 
     render() {
       const { customers } = this.state;
-      return <WrappedComponent {...this.props} customers={customers} />;
+      return <WrappedComponent {...this.props} customers={customers} fetchCustomers={this.fetchCustomers} />;
     }
   };
 };

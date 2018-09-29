@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 import { CustomersList } from './CustomersList';
 import { FilterBox } from './FilterBox';
 import { CustomerDetails } from './CustomerDetails';
 import { withCustomersFetch } from './withCustomersFetch';
+import { withCustomerUpdate } from './withCustomerUpdate';
 
 class CustomersListPageComponent extends Component {
   constructor(props) {
@@ -20,6 +22,11 @@ class CustomersListPageComponent extends Component {
   selectCustomer = (customerId) => this.setState(() => ({ selectedCustomerId: customerId }));
 
   deselectCustomer = () => this.setState(() => ({ selectedCustomerId: undefined }));
+
+  changeCustomer = (customer) => {
+    this.props.updateCustomer(customer)
+      .then(this.props.fetchCustomers);
+  };
 
   render() {
     const { customers } = this.props;
@@ -38,6 +45,7 @@ class CustomersListPageComponent extends Component {
               key={selectedCustomerId}
               customer={selectedCustomer}
               deselectCustomer={this.deselectCustomer}
+              changeCustomer={this.changeCustomer}
             />
           )
         }
@@ -61,7 +69,9 @@ CustomersListPageComponent.propTypes = {
         })
       ).isRequired
     })
-  ).isRequired
+  ).isRequired,
+  fetchCustomers: PropTypes.func.isRequired,
+  updateCustomer: PropTypes.func.isRequired,
 };
 
-export const CustomersListPage = withCustomersFetch(CustomersListPageComponent);
+export const CustomersListPage = withCustomersFetch(withCustomerUpdate(CustomersListPageComponent));

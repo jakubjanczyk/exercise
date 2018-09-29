@@ -22,9 +22,12 @@ export class CustomerDetails extends Component {
     }));
   };
 
+  onConfirm = () => this.props.changeCustomer(this.state.customer);
+
   render() {
     const { deselectCustomer } = this.props;
     const { customer } = this.state;
+
     return (
       ReactDOM.createPortal(
         <div className={styles.container} data-test="customer-details">
@@ -55,6 +58,14 @@ export class CustomerDetails extends Component {
                   <option value="non-active">non-active</option>
                 </select>
               </div>
+              <button
+                type="button"
+                data-test="customer-confirm-button"
+                onClick={this.onConfirm}
+                disabled={this.state.customer.status === this.props.customer.status}
+              >
+                Confirm
+              </button>
             </div>
             <div data-test="customer-notes">
               {
@@ -80,5 +91,6 @@ export class CustomerDetails extends Component {
 
 CustomerDetails.propTypes = {
   customer: PropTypes.shape().isRequired,
-  deselectCustomer: PropTypes.func.isRequired
+  deselectCustomer: PropTypes.func.isRequired,
+  changeCustomer: PropTypes.func.isRequired
 };

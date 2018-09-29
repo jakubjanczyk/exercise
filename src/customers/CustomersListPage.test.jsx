@@ -46,7 +46,7 @@ describe('CustomersListPage', () => {
   ];
 
   beforeEach(() => {
-    mock.onGet(/\/customers/).reply(200, customers);
+    mock.onGet(/\/customers/).replyOnce(200, customers);
   });
 
   it('should display list of fetched customers', async () => {
@@ -201,6 +201,34 @@ describe('CustomersListPage', () => {
         component.changeCustomerStatus('current');
 
         expect(component.customerDetailsStatus()).toEqual('current');
+      });
+
+      it('should update status and refresh a list once confirmed', async () => {
+        const newCustomer = {
+          ...customers[0],
+          status: 'current'
+        };
+        mock.onPut(/\/customers\/123/, newCustomer).replyOnce(200);
+        mock.onGet(/\/customers/).replyOnce(200, customers.map(customer => (customer.id === newCustomer.id ? newCustomer : customer)));
+        const component = await mountPage();
+        component.clickOnCustomerAtRow(0);
+
+        component.changeCustomerStatus('current');
+        component.confirmCustomerChange();
+        await flushPromises();
+        component.update();
+        component.goBackToList();
+
+        expect(component.customersTableRowAt(0)).toEqual(
+          ['123', 'current', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923']
+        );
+      });
+
+      it('confirm button should be disabled when no change', async () => {
+        const component = await mountPage();
+        component.clickOnCustomerAtRow(0);
+
+        expect(component.confirmCustomerChangeButton()).toBeDisabled();
       });
     });
   });

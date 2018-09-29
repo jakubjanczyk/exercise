@@ -17,6 +17,10 @@ export const wrapperForCustomersDetails = (component) => {
     .findByDataTest('value')
     .simulate('change', { target: { value } });
 
+  const confirmCustomerChangeButton = () => customerDetailsComponent().findByDataTest('customer-confirm-button');
+
+  const confirmCustomerChange = () => confirmCustomerChangeButton().click();
+
   return {
     customerDetailsComponent,
     goBackToList,
@@ -27,5 +31,7 @@ export const wrapperForCustomersDetails = (component) => {
     customerDetailsStatus,
     customerNotes,
     changeCustomerStatus,
+    confirmCustomerChangeButton,
+    confirmCustomerChange,
   };
 };
