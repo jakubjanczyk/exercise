@@ -5,12 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "lint": "eslint src/**/*.js*"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.3",
     "babel-polyfill": "^6.26.0",
@@ -41,9 +45,11 @@
     "webpack-dev-server": "^3.1.9"
   },
   "dependencies": {
+    "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
-    "react-hot-loader": "^4.3.11"
+    "react-hot-loader": "^4.3.11",
+    "react-table": "^6.8.6"
   },
   "jest": {
     "moduleFileExtensions": [
