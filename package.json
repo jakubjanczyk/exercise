@@ -76,9 +76,11 @@
     "testRegex": "/(__tests__/.*|src/.*\\.(test|spec))\\.(js|jsx)$",
     "testURL": "http://localhost",
     "transform": {
-      "^.+\\.(styl|sass|scss|less|css|pcss)$": "identity-obj-proxy",
       "^.+\\.jsx$": "babel-jest",
       "^.+\\.js$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "^.+\\.(styl|sass|scss|less|css|pcss)$": "identity-obj-proxy"
     },
     "transformIgnorePatterns": [
       "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"

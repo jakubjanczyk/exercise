@@ -14,11 +14,16 @@ export const wrapperForCustomersList = (component) => {
     .find('.rt-tbody .rt-tr')
     .map(row => row.find('.rt-td').map(el => el.text()));
 
+  const clickOnCustomerAtRow = (index) => customersTable()
+    .find('.rt-tbody .rt-tr').at(index)
+    .click();
+
   return {
     customersTableColumns,
     customersTableRowAt,
     numberOfCustomerRows,
     clickOnColumnHeader,
-    customersRows
+    customersRows,
+    clickOnCustomerAtRow
   };
 };

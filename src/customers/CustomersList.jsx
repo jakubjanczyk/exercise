@@ -41,6 +41,7 @@ export const CustomersList = (props) => {
   return (
     <div data-test="customers-list">
       <ReactTable
+        getTrProps={(state, rowInfo) => ({ onClick: () => props.onCustomerSelected(rowInfo.original.id) })}
         data={customers}
         columns={columns}
         defaultPageSize={25}
@@ -61,5 +62,6 @@ CustomersList.propTypes = {
       name: PropTypes.string,
       phone: PropTypes.string
     })
-  ).isRequired
+  ).isRequired,
+  onCustomerSelected: PropTypes.func
 };

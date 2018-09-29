@@ -3,6 +3,7 @@ import { mountWithCustomWrappers } from '../test-utils/custom-wrappers';
 import { wrapperForCustomersList } from './customers-list-test-wrapper';
 import { CustomersListPage } from './CustomersListPage';
 import { wrapperForCustomersListPage } from './customers-list-page-test-wrapper';
+import { wrapperForCustomersDetails } from './customer-details-test-wrapper';
 
 describe('CustomersListPage', () => {
   const customers = [
@@ -107,11 +108,59 @@ describe('CustomersListPage', () => {
         ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923'],
       ]);
     });
+
+    describe('customer details', () => {
+      it('should not open customer details by default', () => {
+        const component = mountPage();
+
+        expect(component.customerDetailsComponent()).not.toExist();
+      });
+
+      it('should open customer details when clicked on customer', () => {
+        const component = mountPage();
+
+        component.clickOnCustomerAtRow(0);
+
+        expect(component.customerDetailsComponent()).toExist();
+      });
+
+      it('should close customer details when clicked on back button', () => {
+        const component = mountPage();
+
+        component.clickOnCustomerAtRow(0);
+        component.goBackToList();
+
+        expect(component.customerDetailsComponent()).not.toExist();
+      });
+
+      it('should display all basic customer details', () => {
+        const component = mountPage();
+
+        component.clickOnCustomerAtRow(0);
+
+        expect(component.customerDetailsId()).toEqual('123');
+        expect(component.customerDetailsName()).toEqual('Jane Doe');
+        expect(component.customerDetailsCreatedAt()).toEqual('2018-09-23 16:11:30');
+        expect(component.customerDetailsPhone()).toEqual('+48234872923');
+        expect(component.customerDetailsStatus()).toEqual('prospective');
+      });
+
+      it('should open one customer, close, open another one with new data', () => {
+        const component = mountPage();
+
+        component.clickOnCustomerAtRow(0);
+        component.goBackToList();
+        component.clickOnCustomerAtRow(1);
+
+        expect(component.customerDetailsId()).toEqual('234');
+      });
+    });
   });
 
   const mountPage = () => mountWithCustomWrappers(
     <CustomersListPage customers={customers} />,
     wrapperForCustomersList,
-    wrapperForCustomersListPage
+    wrapperForCustomersListPage,
+    wrapperForCustomersDetails
   );
 });
