@@ -8,6 +8,10 @@ export const wrapperForCustomersDetails = (component) => {
   const customerDetailsPhone = () => customerDetailsComponent().findByDataTest('customer-phone').findByDataTest('value').text();
   const customerDetailsStatus = () => customerDetailsComponent().findByDataTest('customer-status').findByDataTest('value').text();
 
+  const customerNotes = () => customerDetailsComponent()
+    .findByDataTest('customer-note')
+    .map(note => [note.findByDataTest('customer-note-text').text(), note.findByDataTest('customer-note-date').text()]);
+
   return {
     customerDetailsComponent,
     goBackToList,
@@ -16,5 +20,6 @@ export const wrapperForCustomersDetails = (component) => {
     customerDetailsCreatedAt,
     customerDetailsPhone,
     customerDetailsStatus,
+    customerNotes
   };
 };

@@ -25,6 +25,7 @@
     "implicit-arrow-linebreak": "off",
     "max-len": ["error", 180],
     "no-use-before-define": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "react/jsx-one-expression-per-line": 0
   }
 }

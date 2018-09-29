@@ -42,7 +42,13 @@ CustomersListPage.propTypes = {
       status: PropTypes.string,
       createdAt: PropTypes.string,
       name: PropTypes.string,
-      phone: PropTypes.string
+      phone: PropTypes.string,
+      notes: PropTypes.arrayOf(
+        PropTypes.shape({
+          text: PropTypes.string.isRequired,
+          created: PropTypes.string.isRequired
+        })
+      ).isRequired
     })
   ).isRequired
 };

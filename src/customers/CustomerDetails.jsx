@@ -2,7 +2,7 @@ import * as ReactDOM from 'react-dom';
 import React from 'react';
 import styles from './customer-details.pcss';
 
-export const CustomerDetails = ({customer, deselectCustomer}) => {
+export const CustomerDetails = ({ customer, deselectCustomer }) => {
   if (!customer) {
     return null;
   }
@@ -32,6 +32,20 @@ export const CustomerDetails = ({customer, deselectCustomer}) => {
               <div className={styles.label}>Status:</div>
               <div data-test="value">{customer.status}</div>
             </div>
+          </div>
+          <div data-test="customer-notes">
+            {
+              customer.notes.map((note) => (
+                <div data-test="customer-note" key={note.created}>
+                  <div data-test="customer-note-text">
+                    {note.text}
+                  </div>
+                  <div data-test="customer-note-date">
+                    Created at: {note.created}
+                  </div>
+                </div>
+              ))
+            }
           </div>
         </div>
       </div>,
