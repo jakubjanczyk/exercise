@@ -25,11 +25,21 @@ export class CustomersListPage extends Component {
     const { filterText, selectedCustomerId } = this.state;
 
     const filteredCustomers = customers.filter(customer => Object.values(customer).some(customerValue => customerValue.includes(filterText)));
+    const selectedCustomer = filteredCustomers.find(customer => customer.id === selectedCustomerId);
     return (
       <div>
         <FilterBox value={filterText} onChange={this.changeFilter} />
         <CustomersList customers={filteredCustomers} onCustomerSelected={this.selectCustomer} />
-        <CustomerDetails customer={filteredCustomers.find(customer => customer.id === selectedCustomerId)} deselectCustomer={this.deselectCustomer} />
+        {
+          selectedCustomerId
+          && (
+            <CustomerDetails
+              key={selectedCustomerId}
+              customer={selectedCustomer}
+              deselectCustomer={this.deselectCustomer}
+            />
+          )
+        }
       </div>
     );
   }

@@ -22,10 +22,20 @@ describe('CustomersListPage', () => {
       id: '234', status: 'current', createdAt: '2018-09-20 12:15:30', name: 'John Doe', phone: '+48345213976', notes: []
     },
     {
-      id: '345', status: 'prospective', createdAt: '2018-09-26 12:15:30', name: 'John Smith', phone: '+48345213333', notes: []
+      id: '345',
+      status: 'prospective',
+      createdAt: '2018-09-26 12:15:30',
+      name: 'John Smith',
+      phone: '+48345213333',
+      notes: []
     },
     {
-      id: '456', status: 'non-active', createdAt: '2018-09-18 12:15:30', name: 'Amy Smith', phone: '+48333444555', notes: []
+      id: '456',
+      status: 'non-active',
+      createdAt: '2018-09-18 12:15:30',
+      name: 'Amy Smith',
+      phone: '+48333444555',
+      notes: []
     }
   ];
 
@@ -172,6 +182,15 @@ describe('CustomersListPage', () => {
           ['Some note', 'Created at: 2018-09-28 15:13:12'],
           ['Other note note', 'Created at: 2018-09-29 16:13:12'],
         ]);
+      });
+
+      it('should allow to change status of a customer', () => {
+        const component = mountPage();
+        component.clickOnCustomerAtRow(0);
+
+        component.changeCustomerStatus('current');
+
+        expect(component.customerDetailsStatus()).toEqual('current');
       });
     });
   });
