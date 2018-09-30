@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import { CustomersList } from './CustomersList';
 import { FilterBox } from './FilterBox';
 import { CustomerDetails } from './CustomerDetails';
@@ -23,10 +22,7 @@ class CustomersListPageComponent extends Component {
 
   deselectCustomer = () => this.setState(() => ({ selectedCustomerId: undefined }));
 
-  changeCustomer = (customer) => {
-    this.props.updateCustomer(customer)
-      .then(this.props.fetchCustomers);
-  };
+  changeCustomer = (customer) => this.props.updateCustomer(customer).then(this.props.fetchCustomers);
 
   render() {
     const { customers } = this.props;
@@ -42,7 +38,7 @@ class CustomersListPageComponent extends Component {
           selectedCustomerId
           && (
             <CustomerDetails
-              key={selectedCustomerId}
+              key={selectedCustomer}
               customer={selectedCustomer}
               deselectCustomer={this.deselectCustomer}
               changeCustomer={this.changeCustomer}
@@ -65,7 +61,7 @@ CustomersListPageComponent.propTypes = {
       notes: PropTypes.arrayOf(
         PropTypes.shape({
           text: PropTypes.string.isRequired,
-          created: PropTypes.string.isRequired
+          id: PropTypes.string.isRequired
         })
       ).isRequired
     })

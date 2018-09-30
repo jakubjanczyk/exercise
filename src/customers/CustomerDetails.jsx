@@ -1,14 +1,16 @@
 import * as ReactDOM from 'react-dom';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import uuid from 'uuid';
 import styles from './customer-details.pcss';
-import * as PropTypes from 'prop-types';
 
 export class CustomerDetails extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      customer: props.customer
+      customer: props.customer,
+      newNote: ''
     };
   }
 
@@ -23,6 +25,24 @@ export class CustomerDetails extends Component {
   };
 
   onConfirm = () => this.props.changeCustomer(this.state.customer);
+
+  updateNewNote = (event) => {
+    const newNote = event.target.value;
+    this.setState(() => ({ newNote }));
+  };
+
+  addNote = () => {
+    const newCustomer = {
+      ...this.state.customer,
+      notes: [
+        ...this.state.customer.notes,
+        { text: this.state.newNote, id: uuid() }
+      ]
+    };
+
+    this.props.changeCustomer(newCustomer)
+      .then(() => this.setState(() => ({ customer: newCustomer, newNote: '' })));
+  };
 
   render() {
     const { deselectCustomer } = this.props;
@@ -67,15 +87,16 @@ export class CustomerDetails extends Component {
                 Confirm
               </button>
             </div>
+            <div>
+              <textarea data-test="note-input" value={this.state.newNote} onChange={this.updateNewNote} />
+              <button type="button" data-test="add-note-button" onClick={this.addNote} disabled={this.state.newNote === ''}>Add Note</button>
+            </div>
             <div data-test="customer-notes">
               {
                 customer.notes.map((note) => (
-                  <div data-test="customer-note" key={note.created}>
+                  <div data-test="customer-note" key={note.id}>
                     <div data-test="customer-note-text">
                       {note.text}
-                    </div>
-                    <div data-test="customer-note-date">
-                      Created at: {note.created}
                     </div>
                   </div>
                 ))

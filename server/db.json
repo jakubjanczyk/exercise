@@ -9,11 +9,15 @@
       "notes": [
         {
           "text": "Some note",
-          "created": "2018-09-28 15:13:12"
+          "id": "1"
         },
         {
           "text": "Other note note",
-          "created": "2018-09-29 16:13:12"
+          "id": "2"
+        },
+        {
+          "text": "New note",
+          "id": "186eacf8-1a40-4cf3-9fc6-288703338694"
         }
       ]
     },
@@ -26,7 +30,11 @@
       "notes": [
         {
           "text": "Some note",
-          "created": "2018-09-28 15:13:12"
+          "id": "345"
+        },
+        {
+          "text": "my note",
+          "id": "e9c834d0-7471-410c-bb46-239477296cca"
         }
       ]
     }

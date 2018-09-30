@@ -57,7 +57,8 @@
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-hot-loader": "^4.3.11",
-    "react-table": "^6.8.6"
+    "react-table": "^6.8.6",
+    "uuid": "^3.3.2"
   },
   "jest": {
     "moduleFileExtensions": [

@@ -10,8 +10,9 @@ import { flushPromises } from '../test-utils/async-utils';
 
 const mock = new MockAdapter(axios);
 
+jest.mock('uuid', () => () => '12345');
+
 describe('CustomersListPage', () => {
-  let server;
   const customers = [
     {
       id: '123',
@@ -20,8 +21,8 @@ describe('CustomersListPage', () => {
       name: 'Jane Doe',
       phone: '+48234872923',
       notes: [
-        { text: 'Some note', created: '2018-09-28 15:13:12' },
-        { text: 'Other note note', created: '2018-09-29 16:13:12' }
+        { text: 'Some note', id: '1' },
+        { text: 'Other note note', id: '2' }
       ]
     },
     {
@@ -47,6 +48,10 @@ describe('CustomersListPage', () => {
 
   beforeEach(() => {
     mock.onGet(/\/customers/).replyOnce(200, customers);
+  });
+
+  afterEach(() => {
+    mock.reset();
   });
 
   it('should display list of fetched customers', async () => {
@@ -183,17 +188,6 @@ describe('CustomersListPage', () => {
         expect(component.customerDetailsId()).toEqual('234');
       });
 
-      it('should display all notes for a customer', async () => {
-        const component = await mountPage();
-
-        component.clickOnCustomerAtRow(0);
-
-        expect(component.customerNotes()).toEqual([
-          ['Some note', 'Created at: 2018-09-28 15:13:12'],
-          ['Other note note', 'Created at: 2018-09-29 16:13:12'],
-        ]);
-      });
-
       it('should allow to change status of a customer', async () => {
         const component = await mountPage();
         component.clickOnCustomerAtRow(0);
@@ -229,6 +223,62 @@ describe('CustomersListPage', () => {
         component.clickOnCustomerAtRow(0);
 
         expect(component.confirmCustomerChangeButton()).toBeDisabled();
+      });
+
+      describe('notes', () => {
+        it('should display all notes for a customer', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+
+          expect(component.customerNotes()).toEqual([
+            'Some note',
+            'Other note note'
+          ]);
+        });
+
+        it('should allow to add and save a note', async () => {
+          const newCustomer = {
+            ...customers[0],
+            notes: [
+              ...customers[0].notes,
+              { text: 'Some New Note', id: '12345' }
+            ]
+          };
+          mock.onPut(/\/customers\/123/, newCustomer).replyOnce(200);
+          mock.onGet(/\/customers/).replyOnce(200, customers.map(customer => (customer.id === newCustomer.id ? newCustomer : customer)));
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+          component.typeNote('Some New Note');
+          await component.addNote();
+
+          expect(component.customerNotes()).toEqual([
+            'Some note',
+            'Other note note',
+            'Some New Note'
+          ]);
+        });
+
+        it('should clear input when note added', async () => {
+          const component = await mountPage();
+
+          mock.onPut(/\/customers\/123/).replyOnce(200);
+          mock.onGet(/\/customers/).replyOnce(200, customers);
+          component.clickOnCustomerAtRow(0);
+          component.typeNote('Some New Note');
+          await component.addNote();
+
+          expect(component.newNoteInputText()).toEqual('');
+        });
+
+        it('should disable add note button when no text typed', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+
+          expect(component.addNoteButton()).toBeDisabled();
+        });
       });
     });
   });

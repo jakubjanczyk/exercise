@@ -65,3 +65,7 @@ CustomersList.propTypes = {
   ).isRequired,
   onCustomerSelected: PropTypes.func
 };
+
+CustomersList.defaultProps = {
+  onCustomerSelected: () => null
+};
