@@ -279,6 +279,149 @@ describe('CustomersListPage', () => {
 
           expect(component.addNoteButton()).toBeDisabled();
         });
+
+        describe('editing', () => {
+          it('should not edit note by default', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+
+            expect(component.isEditingNoteAt(0)).toBeFalsy();
+          });
+
+          it('should go to edit mode for a note when edit button clicked', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+
+            expect(component.isEditingNoteAt(0)).toBeTruthy();
+          });
+
+          it('should set current text into input when started editing', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+
+            expect(component.textForEditingNoteAt(0)).toEqual('Some note');
+          });
+
+          it('should allow to change note text', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+            component.typeForEditingNoteAt(0, 'Some note new');
+
+            expect(component.textForEditingNoteAt(0)).toEqual('Some note new');
+          });
+
+          it('only one note edited when button clicked', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+
+            expect(component.isEditingNoteAt(1)).toBeFalsy();
+          });
+
+          it('allows to edit multiple notes', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+            component.editNote(1);
+
+            expect(component.isEditingNoteAt(0)).toBeTruthy();
+            expect(component.isEditingNoteAt(1)).toBeTruthy();
+          });
+
+          it('should hide edit note button when in edit mode', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+
+            expect(component.editNoteButtonAt(0)).not.toExist();
+          });
+
+          it('should show confirm and cancel buttons when editing', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+
+            expect(component.editNoteConfirmButtonAt(0)).toExist();
+            expect(component.editNoteCancelButtonAt(0)).toExist();
+          });
+
+          it('should not show confirm and cancel buttons when not editing', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+
+            expect(component.editNoteConfirmButtonAt(0)).not.toExist();
+            expect(component.editNoteCancelButtonAt(0)).not.toExist();
+          });
+
+          it('should close edit mode on confirm', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+            component.typeForEditingNoteAt(0, 'Some note new');
+            await component.confirmEditingNoteAt(0);
+
+            expect(component.isEditingNoteAt(0)).toBeFalsy();
+          });
+
+          it('should update actual note on confirm', async () => {
+            const newCustomer = {
+              ...customers[0],
+              notes: customers[0].notes.map(note => (note.id === '1' ? { ...note, text: 'Some note new' } : note))
+            };
+            mock.onPut(/\/customers\/123/, newCustomer).replyOnce(200);
+            mock.onGet(/\/customers/).replyOnce(200, customers);
+
+            const component = await mountPage();
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+            component.typeForEditingNoteAt(0, 'Some note new');
+
+            await component.confirmEditingNoteAt(0);
+
+            expect(component.customerNotes()).toEqual([
+              'Some note new',
+              'Other note note'
+            ]);
+          });
+
+          it('should close edit mode on cancel', async () => {
+            const component = await mountPage();
+
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+            component.typeForEditingNoteAt(0, 'Some note new');
+            component.cancelEditingNoteAt(0);
+
+            expect(component.isEditingNoteAt(0)).toBeFalsy();
+          });
+
+          it('should go back to previous note on cancel', async () => {
+            const component = await mountPage();
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+            component.typeForEditingNoteAt(0, 'Some note new');
+
+            component.cancelEditingNoteAt(0);
+
+            expect(component.customerNotes()).toEqual([
+              'Some note',
+              'Other note note'
+            ]);
+          });
+        });
       });
     });
   });

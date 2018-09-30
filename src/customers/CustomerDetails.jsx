@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import uuid from 'uuid';
 import styles from './customer-details.pcss';
+import { Note } from './notes/Note';
 
 export class CustomerDetails extends Component {
   constructor(props) {
@@ -42,6 +43,15 @@ export class CustomerDetails extends Component {
 
     this.props.changeCustomer(newCustomer)
       .then(() => this.setState(() => ({ customer: newCustomer, newNote: '' })));
+  };
+
+  updateNote = (updatedNote) => {
+    const newCustomer = {
+      ...this.state.customer,
+      notes: this.state.customer.notes.map(note => (note.id === updatedNote.id ? updatedNote : note))
+    };
+    this.props.changeCustomer(newCustomer)
+      .then(() => this.setState(() => ({ customer: newCustomer })));
   };
 
   render() {
@@ -94,11 +104,7 @@ export class CustomerDetails extends Component {
             <div data-test="customer-notes">
               {
                 customer.notes.map((note) => (
-                  <div data-test="customer-note" key={note.id}>
-                    <div data-test="customer-note-text">
-                      {note.text}
-                    </div>
-                  </div>
+                  <Note note={note} key={note.id} onChange={this.updateNote} />
                 ))
               }
             </div>
