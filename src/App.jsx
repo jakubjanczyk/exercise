@@ -8,4 +8,4 @@ const App = () => (
   <CustomersPage />
 );
 
-export default hot(module)(App);
+export default process.env.NODE_ENV === 'production' ? App : hot(module)(App);
