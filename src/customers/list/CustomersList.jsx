@@ -11,27 +11,27 @@ const columns = [
     resizable: false
   },
   {
-    Header: 'Status',
-    id: 'status',
-    accessor: 'status',
-    resizable: false
-  },
-  {
-    Header: 'Created at',
-    id: 'createdAt',
-    accessor: 'createdAt',
-    resizable: false
-  },
-  {
     Header: 'Name',
     id: 'name',
     accessor: 'name',
     resizable: false
   },
   {
+    Header: 'Status',
+    id: 'status',
+    accessor: 'status',
+    resizable: false
+  },
+  {
     Header: 'Phone',
     id: 'phone',
     accessor: 'phone',
+    resizable: false
+  },
+  {
+    Header: 'Created at',
+    id: 'createdAt',
+    accessor: 'createdAt',
     resizable: false
   }
 ];

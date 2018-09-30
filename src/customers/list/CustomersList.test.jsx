@@ -7,7 +7,7 @@ describe('CustomersList', () => {
   it('should render table with necessary columns', () => {
     const component = mountComponent();
 
-    expect(component.customersTableColumns()).toEqual(['ID', 'Status', 'Created at', 'Name', 'Phone']);
+    expect(component.customersTableColumns()).toEqual(['ID', 'Name', 'Status', 'Phone', 'Created at']);
   });
 
   it('should render row for a customer', () => {
@@ -17,7 +17,7 @@ describe('CustomersList', () => {
       }
     ]);
 
-    expect(component.customersTableRowAt(0)).toEqual(['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923']);
+    expect(component.customersTableRowAt(0)).toEqual(['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30']);
   });
 
   it('should render rows for multiple customers', () => {
@@ -31,8 +31,8 @@ describe('CustomersList', () => {
     ]);
 
     expect(component.numberOfCustomerRows()).toEqual(2);
-    expect(component.customersTableRowAt(0)).toEqual(['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923']);
-    expect(component.customersTableRowAt(1)).toEqual(['234', 'current', '2018-09-20 12:15:30', 'John Doe', '+48345213976']);
+    expect(component.customersTableRowAt(0)).toEqual(['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30']);
+    expect(component.customersTableRowAt(1)).toEqual(['234', 'John Doe', 'current', '+48345213976', '2018-09-20 12:15:30']);
   });
 
   it('should allow to sort table by any column ascending', () => {
@@ -48,8 +48,8 @@ describe('CustomersList', () => {
 
     component.clickOnColumnHeader('Status');
 
-    expect(component.customersTableRowAt(0)).toEqual(['234', 'current', '2018-09-20 12:15:30', 'John Doe', '+48345213976']);
-    expect(component.customersTableRowAt(1)).toEqual(['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923']);
+    expect(component.customersTableRowAt(0)).toEqual(['234', 'John Doe', 'current', '+48345213976', '2018-09-20 12:15:30']);
+    expect(component.customersTableRowAt(1)).toEqual(['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30']);
   });
 
   it('should allow to sort table by any column descending', () => {
@@ -66,8 +66,8 @@ describe('CustomersList', () => {
     component.clickOnColumnHeader('Status');
     component.clickOnColumnHeader('Status');
 
-    expect(component.customersTableRowAt(0)).toEqual(['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923']);
-    expect(component.customersTableRowAt(1)).toEqual(['234', 'current', '2018-09-20 12:15:30', 'John Doe', '+48345213976']);
+    expect(component.customersTableRowAt(0)).toEqual(['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30']);
+    expect(component.customersTableRowAt(1)).toEqual(['234', 'John Doe', 'current', '+48345213976', '2018-09-20 12:15:30']);
   });
 
   const mountComponent = (customers = []) =>

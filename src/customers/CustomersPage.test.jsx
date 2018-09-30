@@ -59,10 +59,10 @@ describe('CustomersPage', () => {
     const component = await mountPage();
 
     expect(component.customersRows()).toEqual([
-      ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923'],
-      ['234', 'current', '2018-09-20 12:15:30', 'John Doe', '+48345213976'],
-      ['345', 'prospective', '2018-09-26 12:15:30', 'John Smith', '+48345213333'],
-      ['456', 'non-active', '2018-09-18 12:15:30', 'Amy Smith', '+48333444555']
+      ['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30'],
+      ['234', 'John Doe', 'current', '+48345213976', '2018-09-20 12:15:30'],
+      ['345', 'John Smith', 'prospective', '+48345213333', '2018-09-26 12:15:30'],
+      ['456', 'Amy Smith', 'non-active', '+48333444555', '2018-09-18 12:15:30']
     ]);
   });
 
@@ -73,7 +73,7 @@ describe('CustomersPage', () => {
       component.typeFilterText('456');
 
       expect(component.customersRows()).toEqual([
-        ['456', 'non-active', '2018-09-18 12:15:30', 'Amy Smith', '+48333444555']
+        ['456', 'Amy Smith', 'non-active', '+48333444555', '2018-09-18 12:15:30']
       ]);
     });
 
@@ -83,8 +83,8 @@ describe('CustomersPage', () => {
       component.typeFilterText('prospective');
 
       expect(component.customersRows()).toEqual([
-        ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923'],
-        ['345', 'prospective', '2018-09-26 12:15:30', 'John Smith', '+48345213333'],
+        ['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30'],
+        ['345', 'John Smith', 'prospective', '+48345213333', '2018-09-26 12:15:30']
       ]);
     });
 
@@ -94,7 +94,7 @@ describe('CustomersPage', () => {
       component.typeFilterText('09-23');
 
       expect(component.customersRows()).toEqual([
-        ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923'],
+        ['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30']
       ]);
     });
 
@@ -104,8 +104,8 @@ describe('CustomersPage', () => {
       component.typeFilterText('Doe');
 
       expect(component.customersRows()).toEqual([
-        ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923'],
-        ['234', 'current', '2018-09-20 12:15:30', 'John Doe', '+48345213976']
+        ['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30'],
+        ['234', 'John Doe', 'current', '+48345213976', '2018-09-20 12:15:30']
       ]);
     });
 
@@ -115,7 +115,7 @@ describe('CustomersPage', () => {
       component.typeFilterText('+48234872');
 
       expect(component.customersRows()).toEqual([
-        ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923']
+        ['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30']
       ]);
     });
 
@@ -125,8 +125,8 @@ describe('CustomersPage', () => {
       component.typeFilterText('doe');
 
       expect(component.customersRows()).toEqual([
-        ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923'],
-        ['234', 'current', '2018-09-20 12:15:30', 'John Doe', '+48345213976']
+        ['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30'],
+        ['234', 'John Doe', 'current', '+48345213976', '2018-09-20 12:15:30']
       ]);
     });
 
@@ -144,8 +144,8 @@ describe('CustomersPage', () => {
       component.typeFilterText('234');
 
       expect(component.customersRows()).toEqual([
-        ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923'],
-        ['234', 'current', '2018-09-20 12:15:30', 'John Doe', '+48345213976']
+        ['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30'],
+        ['234', 'John Doe', 'current', '+48345213976', '2018-09-20 12:15:30']
       ]);
     });
 
@@ -157,8 +157,8 @@ describe('CustomersPage', () => {
       component.typeFilterText('prospective');
 
       expect(component.customersRows()).toEqual([
-        ['345', 'prospective', '2018-09-26 12:15:30', 'John Smith', '+48345213333'],
-        ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923'],
+        ['345', 'John Smith', 'prospective', '+48345213333', '2018-09-26 12:15:30'],
+        ['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30']
       ]);
     });
 
@@ -234,7 +234,7 @@ describe('CustomersPage', () => {
         component.goBackToList();
 
         expect(component.customersTableRowAt(0)).toEqual(
-          ['123', 'current', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923']
+          ['123', 'Jane Doe', 'current', '+48234872923', '2018-09-23 16:11:30']
         );
       });
 
