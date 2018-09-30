@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import uuid from 'uuid';
 import { Note } from './Note';
+import styles from './notes.pcss';
 
 export class Notes extends Component {
   state = {
@@ -30,10 +31,19 @@ export class Notes extends Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <textarea data-test="note-input" value={this.state.newNote} onChange={this.updateNewNote} />
+      <div className={styles.container}>
+        <div className={styles.header}>
+          Notes
+        </div>
+        <div data-test="customer-notes" className={styles.notesItems}>
+          {
+            this.props.notes.map(note => <Note note={note} key={note.id} onChange={this.updateNote} />)
+          }
+        </div>
+        <div className={styles.addContainer}>
+          <textarea className={styles.addInput} data-test="note-input" value={this.state.newNote} onChange={this.updateNewNote} />
           <button
+            className={styles.addButton}
             type="button"
             data-test="add-note-button"
             onClick={this.addNote}
@@ -41,11 +51,6 @@ export class Notes extends Component {
           >
             Add Note
           </button>
-        </div>
-        <div data-test="customer-notes">
-          {
-            this.props.notes.map(note => <Note note={note} key={note.id} onChange={this.updateNote} />)
-          }
         </div>
       </div>
     );

@@ -5,6 +5,7 @@ import { withCustomerUpdate } from './withCustomerUpdate';
 import { CustomerDetails } from './details/CustomerDetails';
 import { FilterBox } from './filter/FilterBox';
 import { CustomersList } from './list/CustomersList';
+import styles from './customers-page.pcss';
 
 class CustomersPageComponent extends Component {
   constructor(props) {
@@ -28,24 +29,26 @@ class CustomersPageComponent extends Component {
     const { customers } = this.props;
     const { filterText, selectedCustomerId } = this.state;
 
-    const filteredCustomers = customers.filter(customer => Object.values(customer).some(customerValue => customerValue.includes(filterText)));
+    const filteredCustomers = customers.filter(customer => Object.values(customer)
+      .some(customerValue => typeof customerValue === 'string' && customerValue.toLowerCase().includes(filterText.toLowerCase())));
     const selectedCustomer = filteredCustomers.find(customer => customer.id === selectedCustomerId);
     return (
-      <div>
+      <main className={styles.page}>
+        <h1 className={styles.header}>Customers</h1>
         <FilterBox value={filterText} onChange={this.changeFilter} />
         <CustomersList customers={filteredCustomers} onCustomerSelected={this.selectCustomer} />
         {
           selectedCustomerId
           && (
             <CustomerDetails
-              key={selectedCustomer}
+              key={selectedCustomerId}
               customer={selectedCustomer}
               deselectCustomer={this.deselectCustomer}
               changeCustomer={this.changeCustomer}
             />
           )
         }
-      </div>
+      </main>
     );
   }
 }

@@ -1,0 +1,39 @@
+.customersList {
+  :global {
+    .rt-thead.-header {
+      height: 40px;
+      justify-content: center;
+
+      .rt-th {
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        outline: none;
+      }
+    }
+
+    .rt-tbody {
+      background-color: transparent;
+
+      .rt-tr-group {
+        height: 50px;
+        cursor: pointer;
+
+        &:hover .rt-td {
+          background-color: #eff2f4;
+        }
+
+        .rt-td {
+          display: flex;
+          align-items: center;
+          border: none;
+        }
+      }
+    }
+
+    .rt-noData {
+      top: 200%;
+    }
+  }
+}

@@ -119,6 +119,25 @@ describe('CustomersPage', () => {
       ]);
     });
 
+    it('should allow to filter list of customers, ignoring case', async () => {
+      const component = await mountPage();
+
+      component.typeFilterText('doe');
+
+      expect(component.customersRows()).toEqual([
+        ['123', 'prospective', '2018-09-23 16:11:30', 'Jane Doe', '+48234872923'],
+        ['234', 'current', '2018-09-20 12:15:30', 'John Doe', '+48345213976']
+      ]);
+    });
+
+    it('should not allow to filter list of customers by notes', async () => {
+      const component = await mountPage();
+
+      component.typeFilterText('Some note');
+
+      expect(component.customersRows()).toEqual([]);
+    });
+
     it('should allow to filter list of customers by multiple fields', async () => {
       const component = await mountPage();
 
@@ -219,11 +238,11 @@ describe('CustomersPage', () => {
         );
       });
 
-      it('confirm button should be disabled when no change', async () => {
+      it('confirm button should be not rendered when no change', async () => {
         const component = await mountPage();
         component.clickOnCustomerAtRow(0);
 
-        expect(component.confirmCustomerChangeButton()).toBeDisabled();
+        expect(component.confirmCustomerChangeButton()).not.toExist();
       });
 
       describe('notes', () => {

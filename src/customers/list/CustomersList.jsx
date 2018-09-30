@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import PropTypes from 'prop-types';
+import styles from './customers-list.pcss';
 
 const columns = [
   {
@@ -39,15 +40,16 @@ export const CustomersList = (props) => {
   const { customers } = props;
 
   return (
-    <div data-test="customers-list">
+    <div className={styles.customersList} data-test="customers-list">
       <ReactTable
         getTrProps={(state, rowInfo) => ({ onClick: () => props.onCustomerSelected(rowInfo.original.id) })}
         data={customers}
         columns={columns}
+        showPagination={customers.length > 25}
         defaultPageSize={25}
         pageSizeOptions={[25, 50, 100]}
-        minRows={1}
-        noDataText="No Customers"
+        minRows={0}
+        noDataText="No matching customers"
       />
     </div>
   );

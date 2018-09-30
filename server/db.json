@@ -8,7 +8,7 @@
       "phone": "+48234872923",
       "notes": [
         {
-          "text": "Some note 1",
+          "text": "Some note 1 s",
           "id": "1"
         },
         {
@@ -18,6 +18,34 @@
         {
           "text": "New note",
           "id": "186eacf8-1a40-4cf3-9fc6-288703338694"
+        },
+        {
+          "text": "my note",
+          "id": "0aca56d1-b2ae-4dd6-881d-3fad67b18b84"
+        },
+        {
+          "text": "one more note",
+          "id": "7091d6fd-78d6-42aa-9c30-d5f6134957e3"
+        },
+        {
+          "text": "another note",
+          "id": "505da5ec-4bf8-4fb2-bff8-4c3cba97858a"
+        },
+        {
+          "text": "note note",
+          "id": "55d9db9f-efd9-43df-89f5-aba1e7b03526"
+        },
+        {
+          "text": "note",
+          "id": "6bda7b4e-8466-4edb-8321-1970d30214bd"
+        },
+        {
+          "text": "dsfdssdsdfsdfsdf sdf sdf sdf sdf sdfsd f f sdfsfs dfsd fsd fsdf sd fds fs fds fs fs fs dfs fs ",
+          "id": "7d7258f3-e9dd-4188-a6cf-21a647b9ff15"
+        },
+        {
+          "text": "sdfdsf",
+          "id": "04b662cc-e4cc-46fd-a66c-26d74cd4b4d0"
         }
       ]
     },
