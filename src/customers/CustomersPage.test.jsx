@@ -161,296 +161,296 @@ describe('CustomersPage', () => {
         ['123', 'Jane Doe', 'prospective', '+48234872923', '2018-09-23 16:11:30']
       ]);
     });
+  });
 
-    describe('customer details', () => {
-      it('should not open customer details by default', async () => {
-        const component = await mountPage();
+  describe('customer details', () => {
+    it('should not open customer details by default', async () => {
+      const component = await mountPage();
 
-        expect(component.customerDetailsComponent()).not.toExist();
-      });
+      expect(component.customerDetailsComponent()).not.toExist();
+    });
 
-      it('should open customer details when clicked on customer', async () => {
+    it('should open customer details when clicked on customer', async () => {
+      const component = await mountPage();
+
+      component.clickOnCustomerAtRow(0);
+
+      expect(component.customerDetailsComponent()).toExist();
+    });
+
+    it('should close customer details when clicked on back button', async () => {
+      const component = await mountPage();
+
+      component.clickOnCustomerAtRow(0);
+      component.goBackToList();
+
+      expect(component.customerDetailsComponent()).not.toExist();
+    });
+
+    it('should display all basic customer details', async () => {
+      const component = await mountPage();
+
+      component.clickOnCustomerAtRow(0);
+
+      expect(component.customerDetailsId()).toEqual('123');
+      expect(component.customerDetailsName()).toEqual('Jane Doe');
+      expect(component.customerDetailsCreatedAt()).toEqual('2018-09-23 16:11:30');
+      expect(component.customerDetailsPhone()).toEqual('+48234872923');
+      expect(component.customerDetailsStatus()).toEqual('prospective');
+    });
+
+    it('should open one customer, close, open another one with new data', async () => {
+      const component = await mountPage();
+
+      component.clickOnCustomerAtRow(0);
+      component.goBackToList();
+      component.clickOnCustomerAtRow(1);
+
+      expect(component.customerDetailsId()).toEqual('234');
+    });
+
+    it('should allow to change status of a customer', async () => {
+      const component = await mountPage();
+      component.clickOnCustomerAtRow(0);
+
+      component.changeCustomerStatus('current');
+
+      expect(component.customerDetailsStatus()).toEqual('current');
+    });
+
+    it('should update status and refresh a list once confirmed', async () => {
+      const newCustomer = {
+        ...customers[0],
+        status: 'current'
+      };
+      mock.onPut(/\/customers\/123/, newCustomer).replyOnce(200);
+      mock.onGet(/\/customers/).replyOnce(200, customers.map(customer => (customer.id === newCustomer.id ? newCustomer : customer)));
+      const component = await mountPage();
+      component.clickOnCustomerAtRow(0);
+
+      component.changeCustomerStatus('current');
+      component.confirmCustomerChange();
+      await flushPromises();
+      component.update();
+      component.goBackToList();
+
+      expect(component.customersTableRowAt(0)).toEqual(
+        ['123', 'Jane Doe', 'current', '+48234872923', '2018-09-23 16:11:30']
+      );
+    });
+
+    it('confirm button should be not rendered when no change', async () => {
+      const component = await mountPage();
+      component.clickOnCustomerAtRow(0);
+
+      expect(component.confirmCustomerChangeButton()).not.toExist();
+    });
+
+    describe('notes', () => {
+      it('should display all notes for a customer', async () => {
         const component = await mountPage();
 
         component.clickOnCustomerAtRow(0);
 
-        expect(component.customerDetailsComponent()).toExist();
+        expect(component.customerNotes()).toEqual([
+          'Some note',
+          'Other note note'
+        ]);
       });
 
-      it('should close customer details when clicked on back button', async () => {
-        const component = await mountPage();
-
-        component.clickOnCustomerAtRow(0);
-        component.goBackToList();
-
-        expect(component.customerDetailsComponent()).not.toExist();
-      });
-
-      it('should display all basic customer details', async () => {
-        const component = await mountPage();
-
-        component.clickOnCustomerAtRow(0);
-
-        expect(component.customerDetailsId()).toEqual('123');
-        expect(component.customerDetailsName()).toEqual('Jane Doe');
-        expect(component.customerDetailsCreatedAt()).toEqual('2018-09-23 16:11:30');
-        expect(component.customerDetailsPhone()).toEqual('+48234872923');
-        expect(component.customerDetailsStatus()).toEqual('prospective');
-      });
-
-      it('should open one customer, close, open another one with new data', async () => {
-        const component = await mountPage();
-
-        component.clickOnCustomerAtRow(0);
-        component.goBackToList();
-        component.clickOnCustomerAtRow(1);
-
-        expect(component.customerDetailsId()).toEqual('234');
-      });
-
-      it('should allow to change status of a customer', async () => {
-        const component = await mountPage();
-        component.clickOnCustomerAtRow(0);
-
-        component.changeCustomerStatus('current');
-
-        expect(component.customerDetailsStatus()).toEqual('current');
-      });
-
-      it('should update status and refresh a list once confirmed', async () => {
+      it('should allow to add and save a note', async () => {
         const newCustomer = {
           ...customers[0],
-          status: 'current'
+          notes: [
+            ...customers[0].notes,
+            { text: 'Some New Note', id: '12345' }
+          ]
         };
         mock.onPut(/\/customers\/123/, newCustomer).replyOnce(200);
         mock.onGet(/\/customers/).replyOnce(200, customers.map(customer => (customer.id === newCustomer.id ? newCustomer : customer)));
         const component = await mountPage();
+
         component.clickOnCustomerAtRow(0);
+        component.typeNote('Some New Note');
+        await component.addNote();
 
-        component.changeCustomerStatus('current');
-        component.confirmCustomerChange();
-        await flushPromises();
-        component.update();
-        component.goBackToList();
-
-        expect(component.customersTableRowAt(0)).toEqual(
-          ['123', 'Jane Doe', 'current', '+48234872923', '2018-09-23 16:11:30']
-        );
+        expect(component.customerNotes()).toEqual([
+          'Some note',
+          'Other note note',
+          'Some New Note'
+        ]);
       });
 
-      it('confirm button should be not rendered when no change', async () => {
+      it('should clear input when note added', async () => {
         const component = await mountPage();
-        component.clickOnCustomerAtRow(0);
 
-        expect(component.confirmCustomerChangeButton()).not.toExist();
+        mock.onPut(/\/customers\/123/).replyOnce(200);
+        mock.onGet(/\/customers/).replyOnce(200, customers);
+        component.clickOnCustomerAtRow(0);
+        component.typeNote('Some New Note');
+        await component.addNote();
+
+        expect(component.newNoteInputText()).toEqual('');
       });
 
-      describe('notes', () => {
-        it('should display all notes for a customer', async () => {
+      it('should disable add note button when no text typed', async () => {
+        const component = await mountPage();
+
+        component.clickOnCustomerAtRow(0);
+
+        expect(component.addNoteButton()).toBeDisabled();
+      });
+
+      describe('editing', () => {
+        it('should not edit note by default', async () => {
           const component = await mountPage();
 
           component.clickOnCustomerAtRow(0);
+
+          expect(component.isEditingNoteAt(0)).toBeFalsy();
+        });
+
+        it('should go to edit mode for a note when edit button clicked', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+
+          expect(component.isEditingNoteAt(0)).toBeTruthy();
+        });
+
+        it('should set current text into input when started editing', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+
+          expect(component.textForEditingNoteAt(0)).toEqual('Some note');
+        });
+
+        it('should allow to change note text', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+          component.typeForEditingNoteAt(0, 'Some note new');
+
+          expect(component.textForEditingNoteAt(0)).toEqual('Some note new');
+        });
+
+        it('only one note edited when button clicked', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+
+          expect(component.isEditingNoteAt(1)).toBeFalsy();
+        });
+
+        it('allows to edit multiple notes', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+          component.editNote(1);
+
+          expect(component.isEditingNoteAt(0)).toBeTruthy();
+          expect(component.isEditingNoteAt(1)).toBeTruthy();
+        });
+
+        it('should hide edit note button when in edit mode', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+
+          expect(component.editNoteButtonAt(0)).not.toExist();
+        });
+
+        it('should show confirm and cancel buttons when editing', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+
+          expect(component.editNoteConfirmButtonAt(0)).toExist();
+          expect(component.editNoteCancelButtonAt(0)).toExist();
+        });
+
+        it('should not show confirm and cancel buttons when not editing', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+
+          expect(component.editNoteConfirmButtonAt(0)).not.toExist();
+          expect(component.editNoteCancelButtonAt(0)).not.toExist();
+        });
+
+        it('should close edit mode on confirm', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+          component.typeForEditingNoteAt(0, 'Some note new');
+          await component.confirmEditingNoteAt(0);
+
+          expect(component.isEditingNoteAt(0)).toBeFalsy();
+        });
+
+        it('should disable confirm button when no note text', async () => {
+          const component = await mountPage();
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+
+          component.typeForEditingNoteAt(0, '');
+
+          expect(component.editNoteConfirmButtonAt(0)).toBeDisabled();
+        });
+
+        it('should update actual note on confirm', async () => {
+          const newCustomer = {
+            ...customers[0],
+            notes: customers[0].notes.map(note => (note.id === '1' ? { ...note, text: 'Some note new' } : note))
+          };
+          mock.onPut(/\/customers\/123/, newCustomer).replyOnce(200);
+          mock.onGet(/\/customers/).replyOnce(200, customers);
+
+          const component = await mountPage();
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+          component.typeForEditingNoteAt(0, 'Some note new');
+
+          await component.confirmEditingNoteAt(0);
+
+          expect(component.customerNotes()).toEqual([
+            'Some note new',
+            'Other note note'
+          ]);
+        });
+
+        it('should close edit mode on cancel', async () => {
+          const component = await mountPage();
+
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+          component.typeForEditingNoteAt(0, 'Some note new');
+          component.cancelEditingNoteAt(0);
+
+          expect(component.isEditingNoteAt(0)).toBeFalsy();
+        });
+
+        it('should go back to previous note on cancel', async () => {
+          const component = await mountPage();
+          component.clickOnCustomerAtRow(0);
+          component.editNote(0);
+          component.typeForEditingNoteAt(0, 'Some note new');
+
+          component.cancelEditingNoteAt(0);
 
           expect(component.customerNotes()).toEqual([
             'Some note',
             'Other note note'
           ]);
-        });
-
-        it('should allow to add and save a note', async () => {
-          const newCustomer = {
-            ...customers[0],
-            notes: [
-              ...customers[0].notes,
-              { text: 'Some New Note', id: '12345' }
-            ]
-          };
-          mock.onPut(/\/customers\/123/, newCustomer).replyOnce(200);
-          mock.onGet(/\/customers/).replyOnce(200, customers.map(customer => (customer.id === newCustomer.id ? newCustomer : customer)));
-          const component = await mountPage();
-
-          component.clickOnCustomerAtRow(0);
-          component.typeNote('Some New Note');
-          await component.addNote();
-
-          expect(component.customerNotes()).toEqual([
-            'Some note',
-            'Other note note',
-            'Some New Note'
-          ]);
-        });
-
-        it('should clear input when note added', async () => {
-          const component = await mountPage();
-
-          mock.onPut(/\/customers\/123/).replyOnce(200);
-          mock.onGet(/\/customers/).replyOnce(200, customers);
-          component.clickOnCustomerAtRow(0);
-          component.typeNote('Some New Note');
-          await component.addNote();
-
-          expect(component.newNoteInputText()).toEqual('');
-        });
-
-        it('should disable add note button when no text typed', async () => {
-          const component = await mountPage();
-
-          component.clickOnCustomerAtRow(0);
-
-          expect(component.addNoteButton()).toBeDisabled();
-        });
-
-        describe('editing', () => {
-          it('should not edit note by default', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-
-            expect(component.isEditingNoteAt(0)).toBeFalsy();
-          });
-
-          it('should go to edit mode for a note when edit button clicked', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-
-            expect(component.isEditingNoteAt(0)).toBeTruthy();
-          });
-
-          it('should set current text into input when started editing', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-
-            expect(component.textForEditingNoteAt(0)).toEqual('Some note');
-          });
-
-          it('should allow to change note text', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-            component.typeForEditingNoteAt(0, 'Some note new');
-
-            expect(component.textForEditingNoteAt(0)).toEqual('Some note new');
-          });
-
-          it('only one note edited when button clicked', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-
-            expect(component.isEditingNoteAt(1)).toBeFalsy();
-          });
-
-          it('allows to edit multiple notes', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-            component.editNote(1);
-
-            expect(component.isEditingNoteAt(0)).toBeTruthy();
-            expect(component.isEditingNoteAt(1)).toBeTruthy();
-          });
-
-          it('should hide edit note button when in edit mode', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-
-            expect(component.editNoteButtonAt(0)).not.toExist();
-          });
-
-          it('should show confirm and cancel buttons when editing', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-
-            expect(component.editNoteConfirmButtonAt(0)).toExist();
-            expect(component.editNoteCancelButtonAt(0)).toExist();
-          });
-
-          it('should not show confirm and cancel buttons when not editing', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-
-            expect(component.editNoteConfirmButtonAt(0)).not.toExist();
-            expect(component.editNoteCancelButtonAt(0)).not.toExist();
-          });
-
-          it('should close edit mode on confirm', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-            component.typeForEditingNoteAt(0, 'Some note new');
-            await component.confirmEditingNoteAt(0);
-
-            expect(component.isEditingNoteAt(0)).toBeFalsy();
-          });
-
-          it('should disable confirm button when no note text', async () => {
-            const component = await mountPage();
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-
-            component.typeForEditingNoteAt(0, '');
-
-            expect(component.editNoteConfirmButtonAt(0)).toBeDisabled();
-          });
-
-          it('should update actual note on confirm', async () => {
-            const newCustomer = {
-              ...customers[0],
-              notes: customers[0].notes.map(note => (note.id === '1' ? { ...note, text: 'Some note new' } : note))
-            };
-            mock.onPut(/\/customers\/123/, newCustomer).replyOnce(200);
-            mock.onGet(/\/customers/).replyOnce(200, customers);
-
-            const component = await mountPage();
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-            component.typeForEditingNoteAt(0, 'Some note new');
-
-            await component.confirmEditingNoteAt(0);
-
-            expect(component.customerNotes()).toEqual([
-              'Some note new',
-              'Other note note'
-            ]);
-          });
-
-          it('should close edit mode on cancel', async () => {
-            const component = await mountPage();
-
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-            component.typeForEditingNoteAt(0, 'Some note new');
-            component.cancelEditingNoteAt(0);
-
-            expect(component.isEditingNoteAt(0)).toBeFalsy();
-          });
-
-          it('should go back to previous note on cancel', async () => {
-            const component = await mountPage();
-            component.clickOnCustomerAtRow(0);
-            component.editNote(0);
-            component.typeForEditingNoteAt(0, 'Some note new');
-
-            component.cancelEditingNoteAt(0);
-
-            expect(component.customerNotes()).toEqual([
-              'Some note',
-              'Other note note'
-            ]);
-          });
         });
       });
     });
