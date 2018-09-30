@@ -8,7 +8,7 @@
     "start": "concurrently --kill-others \"npm run server\" \"cross-env BASE_URL=http://localhost:5555 webpack-dev-server\"",
     "lint": "eslint src/**/*.js*",
     "server": "json-server --watch ./server/db.json --port 5555",
-    "build:prod": "webpack --config webpack.config.prod.js",
+    "build:prod": "npm run lint && webpack --config webpack.config.prod.js",
     "start:prod": "concurrently --kill-others \"npm run server\" \"cross-env BASE_URL=http://localhost:5555 NODE_ENV=production npm run build:prod && serve -s dist\""
   },
   "author": "",
