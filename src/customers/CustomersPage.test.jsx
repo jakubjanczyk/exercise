@@ -2,17 +2,18 @@ import React from 'react';
 import MockAdapter from 'axios-mock-adapter';
 import axios from 'axios';
 import { mountWithCustomWrappers } from '../test-utils/custom-wrappers';
-import { wrapperForCustomersList } from './customers-list-test-wrapper';
-import { CustomersListPage } from './CustomersListPage';
-import { wrapperForCustomersListPage } from './customers-list-page-test-wrapper';
-import { wrapperForCustomersDetails } from './customer-details-test-wrapper';
 import { flushPromises } from '../test-utils/async-utils';
+import { wrapperForNotes } from './notes/notes-test-wrapper';
+import { wrapperForCustomersDetails } from './details/customer-details-test-wrapper';
+import { CustomersPage } from './CustomersPage';
+import { wrapperForCustomersList } from './list/customers-list-test-wrapper';
+import { wrapperForCustomersPage } from './customers-page-test-wrapper';
 
 const mock = new MockAdapter(axios);
 
 jest.mock('uuid', () => () => '12345');
 
-describe('CustomersListPage', () => {
+describe('CustomersPage', () => {
   const customers = [
     {
       id: '123',
@@ -376,6 +377,16 @@ describe('CustomersListPage', () => {
             expect(component.isEditingNoteAt(0)).toBeFalsy();
           });
 
+          it('should disable confirm button when no note text', async () => {
+            const component = await mountPage();
+            component.clickOnCustomerAtRow(0);
+            component.editNote(0);
+
+            component.typeForEditingNoteAt(0, '');
+
+            expect(component.editNoteConfirmButtonAt(0)).toBeDisabled();
+          });
+
           it('should update actual note on confirm', async () => {
             const newCustomer = {
               ...customers[0],
@@ -428,10 +439,11 @@ describe('CustomersListPage', () => {
 
   const mountPage = async () => {
     const component = mountWithCustomWrappers(
-      <CustomersListPage />,
+      <CustomersPage />,
       wrapperForCustomersList,
-      wrapperForCustomersListPage,
-      wrapperForCustomersDetails
+      wrapperForCustomersPage,
+      wrapperForCustomersDetails,
+      wrapperForNotes
     );
     await flushPromises();
     component.update();

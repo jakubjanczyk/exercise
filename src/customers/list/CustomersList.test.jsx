@@ -1,7 +1,7 @@
 import React from 'react';
-import { mountWithCustomWrappers } from '../test-utils/custom-wrappers';
 import { CustomersList } from './CustomersList';
 import { wrapperForCustomersList } from './customers-list-test-wrapper';
+import { mountWithCustomWrappers } from '../../test-utils/custom-wrappers';
 
 describe('CustomersList', () => {
   it('should render table with necessary columns', () => {

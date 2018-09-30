@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { CustomersList } from './CustomersList';
-import { FilterBox } from './FilterBox';
-import { CustomerDetails } from './CustomerDetails';
 import { withCustomersFetch } from './withCustomersFetch';
 import { withCustomerUpdate } from './withCustomerUpdate';
+import { CustomerDetails } from './details/CustomerDetails';
+import { FilterBox } from './filter/FilterBox';
+import { CustomersList } from './list/CustomersList';
 
-class CustomersListPageComponent extends Component {
+class CustomersPageComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -50,7 +50,7 @@ class CustomersListPageComponent extends Component {
   }
 }
 
-CustomersListPageComponent.propTypes = {
+CustomersPageComponent.propTypes = {
   customers: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
@@ -70,4 +70,4 @@ CustomersListPageComponent.propTypes = {
   updateCustomer: PropTypes.func.isRequired,
 };
 
-export const CustomersListPage = withCustomersFetch(withCustomerUpdate(CustomersListPageComponent));
+export const CustomersPage = withCustomersFetch(withCustomerUpdate(CustomersPageComponent));

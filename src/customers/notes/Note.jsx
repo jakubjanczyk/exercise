@@ -34,10 +34,13 @@ export class Note extends Component {
             ? (
               <div>
                 <textarea data-test="note-edit-input" value={editingNote.text} onChange={this.changeNote} />
-
                 <div>
-                  <button type="button" onClick={this.confirm} data-test="note-edit-confirm-button">Confirm</button>
-                  <button type="button" onClick={this.cancel} data-test="note-edit-cancel-button">Cancel</button>
+                  <button type="button" onClick={this.confirm} data-test="note-edit-confirm-button" disabled={this.state.editingNote.text === ''}>
+                    Confirm
+                  </button>
+                  <button type="button" onClick={this.cancel} data-test="note-edit-cancel-button">
+                    Cancel
+                  </button>
                 </div>
               </div>
             )
